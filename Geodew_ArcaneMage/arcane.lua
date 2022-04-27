@@ -58,6 +58,7 @@ local function cofunc(yd)
 			end
 			local arcane_orb_casted = false
 			local casting_first_spell = true
+			local pom_casted = false
 			local i = 1
 			while i <= n do
 				local current_spell = 44425
@@ -95,6 +96,18 @@ local function cofunc(yd)
 									percentage = percentage - 0.1
 									current_time = current_time + real_gcd_val
 									arcane_orb_casted = true
+									break
+								end
+							end
+						end
+						-- Presense of Mind
+						if IsUsableSpell(205025) then
+							if not pom_casted then
+								local start, duration, enabled, modRate = GetSpellCooldown(205025)
+								if duration == 0 then
+									current_spell = 205025
+									charges = charges + 1
+									pom_casted = true
 									break
 								end
 							end
