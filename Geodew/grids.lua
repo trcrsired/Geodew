@@ -7,29 +7,29 @@ local default =
 {
 	Lock = false,
 	Enable = true,
-	Left = 700,
-	Bottom = 800,
-	Size = 60,
+	x = -300,
+	y = 0,
+	Size = 40,
 	CenterTextFont = LSM:GetDefault("font"),
 	CenterTextSize = 30,
 	BottomTextFont = LSM:GetDefault("font"),
 	BottomTextSize = 15,
-	
+
 	LowColorR = 1,
 	LowColorG = 1,
 	LowColorB = 1,
 	LowColorA = 1,
-	
+
 	MidColorR = 0,
 	MidColorG = 0,
 	MidColorB = 1,
 	MidColorA = 1,
-	
+
 	HighColorR = 1,
 	HighColorG = 0,
 	HighColorB = 0,
 	HighColorA = 1,
-	
+
 	BottomTextColorR = 1,
 	BottomTextColorG = 1,
 	BottomTextColorB = 1,
@@ -43,7 +43,11 @@ function Geodew.CreateGrids(name,n)
 	grids_meta.n = n
 	Geodew.grids[name] = grids_meta
 	local globalframe = CreateFrame("Frame",nil,UIParent)
-	grids_meta.globalframe = grids_meta
+	globalframe:Hide()
+	globalframe:SetFrameStrata("MEDIUM")
+	globalframe:SetClampedToScreen(true)
+
+	grids_meta.globalframe = globalframe
 	local frame_tbls = {}
 	grids_meta.frames = frame_tbls
 	local background_tbls = {}
@@ -56,9 +60,6 @@ function Geodew.CreateGrids(name,n)
 	grids_meta.cooldowns = cd_tbls
 	for i=1,n do
 		local frme = CreateFrame("Frame",nil,globalframe)
-		frme:Hide()
-		frme:SetFrameStrata("MEDIUM")
-		frme:SetClampedToScreen(true)
 		if i==1 then
 			frme:SetPoint("BOTTOMLEFT",globalframe,"BOTTOMLEFT")
 			frme:SetPoint("TOPLEFT",globalframe,"TOPLEFT")
@@ -79,7 +80,7 @@ function Geodew.CreateGrids(name,n)
 		local b =  frme : CreateTexture(nil, "BACKGROUND")
 		b:SetAllPoints(frme)
 		b:SetTexCoord(0.1,0.9,0.1,0.9)
-		backgrounds[i] = b
+		background_tbls[i] = b
 		local ct = frme:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 		ct:SetPoint("Center", frme, "CENTER",0, 0)
 		center_text_tbls[i] = ct
@@ -99,34 +100,34 @@ function Geodew.GridsConfig(db,grids_meta)
 		tb = {}
 		db.grids = tb
 	end
-	local enable = tb.Enable
-	if not enable then
-		globalframe:Hide()
-	end
-	local size = tb.Size
-	local frame_tbls = grids_meta.frames
-	local center_text_tbls = grids_meta.center_text_tbls
-	local bottom_text_tbls = grids_meta.bottom_text_tbls
-	local n = #frame_tbls
-	for i=1,n do
-		local frame = frame_tbls[i]
-		local center_text = center_text_tbls[i]
-		local bottom_text = bottom_text_tbls[i]
-		local sz = size
-		if i == 1 then
-			sz = sz*2
-		end
-		frame:SetSize(sz,sz)
-		center_text:SetFont(LSM:HashTable("font")[tb.CenterTextFont], tb.CenterTextSize, "OUTLINE")
-		bottom_text:SetFont(LSM:HashTable("font")[tb.BottomTextFont], tb.BottomTextSize, "OUTLINE")
-	end
+	setmetatable(tb,default)
 	local globalframe = grids_meta.globalframe
-	globalframe:SetSize(size*(n+1),size*2)
-	globalframe:SetPoint("BOTTOMLEFT",UIParent,"BOTTOMLEFT",tb.)
+	local enable = tb.Enable
 	if enable then
+		local size = tb.Size
+		local frame_tbls = grids_meta.frames
+		local center_text_tbls = grids_meta.center_texts
+		local bottom_text_tbls = grids_meta.bottom_texts
+		local n = #frame_tbls
+		for i=1,n do
+			local frame = frame_tbls[i]
+			local center_text = center_text_tbls[i]
+			local bottom_text = bottom_text_tbls[i]
+			local sz = size
+			if i == 1 then
+				sz = sz*2
+			end
+			frame:SetSize(sz,sz)
+			center_text:SetFont(LSM:HashTable("font")[tb.CenterTextFont], tb.CenterTextSize, "OUTLINE")
+			bottom_text:SetFont(LSM:HashTable("font")[tb.BottomTextFont], tb.BottomTextSize, "OUTLINE")
+		end
+		globalframe:SetSize(size*(n+1),size*2)
+		globalframe:SetPoint("CENTER",UIParent,"CENTER",tb.x,tb.y)
 		globalframe:Show()
 	else
---	return tb
+		globalframe:Hide()
+	end
+	return tb
 end
 
 function Geodew.GridCenter(tb,count,L,M,center_text,format)

@@ -4,8 +4,9 @@ function Geodew:OnInitialize()
 	self.db = LibStub("AceDB-3.0"):New("GeodewDB",{},true)
 	self:RegisterChatCommand("Geodew", "ChatCommand")
 	local _,_,classId = UnitClass("player")
+	local classidstr = tostring(classId)
 	for i = 1, GetNumAddOns() do
-		if GetAddOnMetadata(i,"X-GEODEW-CLASS") == classId then
+		if GetAddOnMetadata(i,"X-GEODEW-CLASS") == classidstr then
 			LoadAddOn(i)
 		end
 		local event = GetAddOnMetadata(i, "X-GEODEW-EVENT")
@@ -61,68 +62,60 @@ end
 local function cofunc()
 	local current = coroutine.running()
 	local coresume = coroutine.resume
+	local coyield = coroutine.yield
 	local function resume(...)
 		coresume(current,...)
 	end
-
 	local ticker
 	Geodew:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED",resume,0)
 	Geodew:RegisterEvent("PLAYER_TALENT_UPDATE",resume,0)
-	Geodew:RegisterEvent("ACTIONBAR_UPDATE_STATE",resume,2)
-	Geodew:RegisterEvent("ACTIONBAR_UPDATE_USABLE",resume,2)
-	Geodew:RegisterEvent("SPELL_UPDATE_CHARGES",resume,2)
-	Geodew:RegisterEvent("PLAYER_TARGET_CHANGED",resume,2)
 	Geodew:RegisterMessage("Geodew_OnProfileChanged",resume,0)
-
-	for i=1,#coroutines do
-		coresume(coroutines[i],0)
-	end
-	local yd,arg1,arg2 = 0
-	local refresh = 0
+	local runnings = {}
+	local yd = 0
+	local fullyrunning
 	while true do
-		repeat
-		if yd == 3 then
-			refresh = refresh + 1
-			if refresh < 20 then
-				break
-			end
---			yd = 1
-		end
 		if yd == 0 then
-			if GetSpecialization() == 2 then
-				is_mistweaver = true
+			fullyrunning = nil
+			for i=1,#coroutines do
+				local status,yval = coresume(coroutines[i],0)
+				if status then
+					if yval then
+						fullyrunning = true
+						runnings[i] = true
+					else
+						runnings[i] = false
+					end
+				else
+					Geodew:Print(status,yval)
+				end
+			end
+			if fullyrunning then
+				Geodew:RegisterEvent("ACTIONBAR_UPDATE_STATE",resume,2)
+				Geodew:RegisterEvent("ACTIONBAR_UPDATE_USABLE",resume,2)
+				Geodew:RegisterEvent("SPELL_UPDATE_CHARGES",resume,2)
+				Geodew:RegisterEvent("PLAYER_TARGET_CHANGED",resume,2)
 				if ticker == nil then
 					ticker = C_Timer.NewTicker(0.05,function()
 						coroutine.resume(current,1)
 					end)
 				end
---				Geodew:RegisterEvent("UNIT_HEALTH",resume,3)
 			else
-				is_mistweaver = nil
+				Geodew:UnregisterEvent("ACTIONBAR_UPDATE_STATE")
+				Geodew:UnregisterEvent("ACTIONBAR_UPDATE_USABLE")
+				Geodew:UnregisterEvent("SPELL_UPDATE_CHARGES")
+				Geodew:UnregisterEvent("PLAYER_TARGET_CHANGED")
 				if ticker then
 					ticker:Cancel()
 					ticker = nil
 				end
---				Geodew:UnregisterEvent("UNIT_HEALTH")
-				yd = -1
 			end
-			if InCombatLockdown() then
-				break
-			end
-		end
-		if not is_mistweaver and yd ~= -1 then
-			break
 		end
 		for i=1,#coroutines do
-			local status=coresume(coroutines[i],yd,arg1,arg2)
-			if not status then
-				Geodew:Print(i,status,v,t)
-				table.remove(coroutines,i)
-				break
+			if runnings[i] then
+				coresume(coroutines[i],2)
 			end
 		end
-		until true
-		yd,arg1,arg2 = coroutine.yield()
+		yd = coyield()
 	end
 end
 
