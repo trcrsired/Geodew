@@ -162,8 +162,8 @@ local function cofunc(yd)
 
 			Geodew_GridSpellMinitoring(grid_profile,12042,backgrounds[5],center_texts[5],bottom_texts[5],cooldowns[5])
 			Geodew_GridSpellMinitoring(grid_profile,116011,backgrounds[6],center_texts[6],bottom_texts[6],cooldowns[6])
-			Geodew_GridSpellMinitoring(grid_profile,307443,backgrounds[7],center_texts[7],bottom_texts[7],cooldowns[7])
-			Geodew_GridSpellMinitoring(grid_profile,55342,backgrounds[8],center_texts[8],bottom_texts[8],cooldowns[8])
+			Geodew_GridSpellMinitoring(grid_profile,55342,backgrounds[7],center_texts[7],bottom_texts[7],cooldowns[7])
+			Geodew_GridSpellMinitoring(grid_profile,307443,backgrounds[8],center_texts[8],bottom_texts[8],cooldowns[8])
 		elseif yd == 0 then
 			if GetSpecialization() == 1 then
 				grid_profile = Geodew.GridsConfig(Geodew.GetProfile(specid),grids_meta)
