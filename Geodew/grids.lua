@@ -9,7 +9,7 @@ local default =
 	Enable = true,
 	x = -300,
 	y = 0,
-	Size = 40,
+	Size = 35,
 	CenterTextFont = LSM:GetDefault("font"),
 	CenterTextSize = 30,
 	BottomTextFont = LSM:GetDefault("font"),
@@ -44,8 +44,8 @@ function Geodew.CreateGrids(name,n)
 	Geodew.grids[name] = grids_meta
 	local globalframe = CreateFrame("Frame",nil,UIParent)
 	globalframe:Hide()
-	globalframe:SetFrameStrata("MEDIUM")
-	globalframe:SetClampedToScreen(true)
+--	globalframe:SetFrameStrata("MEDIUM")
+--	globalframe:SetClampedToScreen(true)
 
 	grids_meta.globalframe = globalframe
 	local frame_tbls = {}
@@ -65,9 +65,7 @@ function Geodew.CreateGrids(name,n)
 			frme:SetPoint("TOPLEFT",globalframe,"TOPLEFT")
 		else
 			local lastfrm = frame_tbls[i-1]
-			if i == 2 then
-				frme:SetPoint("TOPLEFT",lastfrm,"RIGHT")
-			else
+			if i ~= 2 then
 				frme:SetPoint("TOPLEFT",lastfrm,"TOPRIGHT")
 			end
 			frme:SetPoint("BOTTOMLEFT",lastfrm,"BOTTOMRIGHT")
