@@ -18,8 +18,8 @@ local Geodew_GridCenter = Geodew.GridCenter
 local function cofunc(yd)
 	local specid = 62
 	local m = 5
-	--Arcane Power, Touch of the Magi, Rune of Power, Radiant Spark, Mirror
-	local monitor_spells = {12042,321507,116011,307443,55342}
+	--Arcane Power, Touch of the Magi,Radiant Spark , Rune of Power, Mirror, Timewrap in reverse order
+	local monitor_spells = {80353,55342,116011,307443,321507,12042}
 	local n = #monitor_spells + m
 	local grids_meta = Geodew.CreateGrids(specid,n,m)
 	local globalframe = grids_meta.globalframe
