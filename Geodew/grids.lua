@@ -154,12 +154,12 @@ function Geodew.GridSpellMinitoring(tb,spellid,background,center_text,bottom_tex
 		local gcd_start, gcd_duration, gcd_enabled, gcd_modRate = GetSpellCooldown(61304)
 		cooldown:SetCooldown(ap_start, ap_duration, ap_enabled, ap_modRate)
 		if ap_duration ~= 0 or (gcd_duration ~=0 and ap_duration ~= gcd_duration) then
-			local remain_time = ap_start+ap_duration-starttime
+			local remain_time = ap_start+ap_duration-GetTime()
 			local s = "%.0f"
 			if remain_time < 5 then
 				s = "%.1f"
 			end
-			Geodew_GridCenter(tb,remain_time,5,10,center_text,s)
+			Geodew.GridCenter(tb,remain_time,5,10,center_text,s)
 		else
 			center_text:Hide()
 		end

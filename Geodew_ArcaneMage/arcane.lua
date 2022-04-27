@@ -17,8 +17,11 @@ local Geodew_GridCenter = Geodew.GridCenter
 
 local function cofunc(yd)
 	local specid = 62
-	local n = 8
-	local grids_meta = Geodew.CreateGrids(specid,n,5)
+	local m = 5
+	--Arcane Power, Touch of the Magi, Rune of Power, Radiant Spark, Mirror
+	local monitor_spells = {12042,321507,116011,307443,55342}
+	local n = #monitor_spells + m
+	local grids_meta = Geodew.CreateGrids(specid,n,m)
 	local globalframe = grids_meta.globalframe
 	local backgrounds = grids_meta.backgrounds
 	local center_texts = grids_meta.center_texts
@@ -159,11 +162,11 @@ local function cofunc(yd)
 			if t then
 				Geodew_GridCenter(grid_profile,t,10,43,center_texts[1],"%.0f")
 			end
-
-			Geodew_GridSpellMinitoring(grid_profile,12042,backgrounds[5],center_texts[5],bottom_texts[5],cooldowns[5])
-			Geodew_GridSpellMinitoring(grid_profile,116011,backgrounds[6],center_texts[6],bottom_texts[6],cooldowns[6])
-			Geodew_GridSpellMinitoring(grid_profile,55342,backgrounds[7],center_texts[7],bottom_texts[7],cooldowns[7])
-			Geodew_GridSpellMinitoring(grid_profile,307443,backgrounds[8],center_texts[8],bottom_texts[8],cooldowns[8])
+			for j = 1,#monitor_spells do
+				local jmm1 = j+m-1
+				Geodew_GridSpellMinitoring(grid_profile,
+				monitor_spells[j],backgrounds[jmm1],center_texts[jmm1],bottom_texts[jmm1],cooldowns[jmm1])
+			end			
 		elseif yd == 0 then
 			if GetSpecialization() == 1 then
 				grid_profile = Geodew.GridsConfig(Geodew.GetProfile(specid),grids_meta)
