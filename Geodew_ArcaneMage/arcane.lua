@@ -121,10 +121,12 @@ local function cofunc(yd)
 				local skip_this_round = false
 				if casting_first_spell then
 					local castname, casttext, casttexture, caststartTimeMS, castendTimeMS, castisTradeSkill, castcastID, castnotInterruptible, castspellId = UnitCastingInfo("player")
-					if castspellId == current_spell then
-						skip_this_round = true
+					if castname then
+						if castendTimeMS < caststartTimeMS + 0.5 and castspellId == current_spell then
+							skip_this_round = true
+						end
+						casting_first_spell = false
 					end
-					casting_first_spell = false
 				end
 				if not skip_this_round then
 					backgrounds[i]:SetTexture(GetSpellTexture(current_spell))
