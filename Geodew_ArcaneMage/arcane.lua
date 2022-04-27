@@ -23,6 +23,8 @@ local function cofunc(yd)
 	local UnitIsPVP = UnitIsPVP
 	local C_PvP_IsPVPMap = C_PvP.IsPVPMap
 	local UnitCastingInfo = UnitCastingInfo
+	local Geodew_GridCenter = Geodew.GridCenter
+	local center_text1 = center_texts[1]
 	while true do
 		repeat
 		if yd ==1 or yd == 2 then
@@ -130,8 +132,13 @@ local function cofunc(yd)
 				end
 				if not skip_this_round then
 					backgrounds[i]:SetTexture(GetSpellTexture(current_spell))
+					cooldowns[i]:SetCooldown(gcd_start, gcd_duration, gcd_enabled, gcd_modRate)
 					i = i + 1
 				end
+			end
+			local t = unit_range("target")
+			if t then
+				Geodew_GridCenter(grid_profile,t,10,43,center_texts[1],"%.0f")
 			end
 		elseif yd == 0 then
 			if GetSpecialization() == 1 then
