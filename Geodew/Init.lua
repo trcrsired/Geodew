@@ -70,6 +70,17 @@ local function cofunc()
 	Geodew:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED",resume,0)
 	Geodew:RegisterEvent("PLAYER_TALENT_UPDATE",resume,0)
 	Geodew:RegisterMessage("Geodew_OnProfileChanged",resume,0)
+	local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
+	local UnitGUID = UnitGUID
+	local function functionresume(...)
+		local timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags =  CombatLogGetCurrentEventInfo()
+		if subevent == "SPELL_CAST_START" or subevent == "SPELL_CAST_SUCCESS" then
+			local playerguid = UnitGUID("player")
+			if sourceGUID == playerguid then
+				coresume(current,...)
+			end
+		end
+	end
 	local runnings = {}
 	local yd = 0
 	local fullyrunning
@@ -94,6 +105,7 @@ local function cofunc()
 				Geodew:RegisterEvent("ACTIONBAR_UPDATE_USABLE",resume,2)
 				Geodew:RegisterEvent("SPELL_UPDATE_CHARGES",resume,2)
 				Geodew:RegisterEvent("PLAYER_TARGET_CHANGED",resume,2)
+				Geodew:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED",functionresume,2)
 				if ticker == nil then
 					ticker = C_Timer.NewTicker(0.05,function()
 						coroutine.resume(current,1)
@@ -104,6 +116,7 @@ local function cofunc()
 				Geodew:UnregisterEvent("ACTIONBAR_UPDATE_USABLE")
 				Geodew:UnregisterEvent("SPELL_UPDATE_CHARGES")
 				Geodew:UnregisterEvent("PLAYER_TARGET_CHANGED")
+				Geodew:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 				if ticker then
 					ticker:Cancel()
 					ticker = nil
