@@ -1,29 +1,30 @@
 local Geodew = LibStub("AceAddon-3.0"):GetAddon("Geodew")
 
 local unit_range = Geodew.unit_range
+local Geodew_GridSpellMinitoring = Geodew.GridSpellMinitoring
+local coyield = coroutine.yield
+local GetSpellTexture = GetSpellTexture
+local IsUsableSpell = IsUsableSpell
+local UnitPower = UnitPower
+local UnitPowerMax = UnitPowerMax
+local GetTime = GetTime
+local GetMasteryEffect = GetMasteryEffect
+local GetHaste = GetHaste
+local UnitIsPVP = UnitIsPVP
+local C_PvP_IsPVPMap = C_PvP.IsPVPMap
+local UnitCastingInfo = UnitCastingInfo
+local Geodew_GridCenter = Geodew.GridCenter
 
 local function cofunc(yd)
 	local specid = 62
-	local n = 4
-	local grids_meta = Geodew.CreateGrids(specid,n)
+	local n = 8
+	local grids_meta = Geodew.CreateGrids(specid,n,5)
 	local globalframe = grids_meta.globalframe
 	local backgrounds = grids_meta.backgrounds
 	local center_texts = grids_meta.center_texts
 	local bottom_texts = grids_meta.bottom_texts
 	local cooldowns = grids_meta.cooldowns
 	local grid_profile
-	local coyield = coroutine.yield
-	local GetSpellTexture = GetSpellTexture
-	local IsUsableSpell = IsUsableSpell
-	local UnitPower = UnitPower
-	local UnitPowerMax = UnitPowerMax
-	local GetTime = GetTime
-	local GetMasteryEffect = GetMasteryEffect
-	local GetHaste = GetHaste
-	local UnitIsPVP = UnitIsPVP
-	local C_PvP_IsPVPMap = C_PvP.IsPVPMap
-	local UnitCastingInfo = UnitCastingInfo
-	local Geodew_GridCenter = Geodew.GridCenter
 	local center_text1 = center_texts[1]
 	while true do
 		repeat
@@ -38,7 +39,8 @@ local function cofunc(yd)
 			local mana_no_master = max_mana/val
 			local percentage = mana / mana_no_master
 			local chargemana =  max_charges * (max_charges + 1) * 0.01375
-			local current_time = GetTime()
+			local starttime = GetTime()
+			local current_time = starttime
 			local haste_effect = 1 + GetHaste()/100
 			local real_gcd_val = 1.5 / haste_effect
 			local arcane_harmony_stacks = 0
@@ -59,8 +61,9 @@ local function cofunc(yd)
 			local arcane_orb_casted = false
 			local casting_first_spell = true
 			local pom_casted = false
+			local totm_casted = false
 			local i = 1
-			while i <= n do
+			while i <= 4 do
 				local current_spell = 44425
 				repeat
 					if percentage < chargemana then
@@ -78,12 +81,15 @@ local function cofunc(yd)
 					if charges == 0 then
 						-- Touch of the Magi
 						if IsUsableSpell(321507) then
-							local start, duration, enabled, modRate = GetSpellCooldown(321507)
-							if duration <= gcd_duration then
-								current_spell = 321507
-								charges = max_charges
-								current_time = current_time + real_gcd_val
-								break
+							if totm_casted then
+								local start, duration, enabled, modRate = GetSpellCooldown(321507)
+								if duration <= gcd_duration then
+									current_spell = 321507
+									charges = max_charges
+									current_time = current_time + real_gcd_val
+									totm_casted = true
+									break
+								end
 							end
 						end
 						-- Arcane Orb
@@ -153,6 +159,11 @@ local function cofunc(yd)
 			if t then
 				Geodew_GridCenter(grid_profile,t,10,43,center_texts[1],"%.0f")
 			end
+
+			Geodew_GridSpellMinitoring(grid_profile,12042,backgrounds[5],center_texts[5],bottom_texts[5],cooldowns[5])
+			Geodew_GridSpellMinitoring(grid_profile,116011,backgrounds[6],center_texts[6],bottom_texts[6],cooldowns[6])
+			Geodew_GridSpellMinitoring(grid_profile,307443,backgrounds[7],center_texts[7],bottom_texts[7],cooldowns[7])
+			Geodew_GridSpellMinitoring(grid_profile,55342,backgrounds[8],center_texts[8],bottom_texts[8],cooldowns[8])
 		elseif yd == 0 then
 			if GetSpecialization() == 1 then
 				grid_profile = Geodew.GridsConfig(Geodew.GetProfile(specid),grids_meta)
