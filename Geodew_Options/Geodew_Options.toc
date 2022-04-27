@@ -1,0 +1,9 @@
+## Interface: 90200
+## Author: cqwrteur
+## Title: Geodew Options
+## LoadOnDemand: 1
+## X-GEODEW-MESSAGE: Geodew_ChatCommand
+
+Libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
+Init.lua
+grid.lua
